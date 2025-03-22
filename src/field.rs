@@ -25,72 +25,34 @@ impl Field {
                 remaining_bombs -= 1;
             }
         }
-// #region Hell 
+
         for i in 0..height {
             for j in 0..width {
                 if !grid[i][j].is_bomb() {
                     let mut count = 0;
-                    if i > 0 && i < height - 1 && j > 0 && j < width - 1 {
-                        for i_offset in -1 as i32..=1 {
-                            for j_offset in -1 as i32..=1 {
-                                if grid[(i as i32 + i_offset) as usize]
-                                    [(j as i32 + j_offset) as usize]
-                                    .is_bomb()
-                                {
-                                    count += 1
-                                }
+
+                    'row_loop: for i_offset in -1 as i32..=1 {
+                        'column_loop: for j_offset in -1 as i32..=1 {
+                            if i == 0 && i_offset == -1 || i == height - 1 && i_offset == 1 {
+                                continue 'row_loop;
+                            }
+                            if j == 0 && j_offset == -1 || j == width - 1 && j_offset == 1 {
+                                continue 'column_loop;
+                            }
+                            let i = (i as i32 + i_offset) as usize;
+                            let j = (j as i32 + j_offset) as usize;
+
+                            if grid[i][j].is_bomb() {
+                                count += 1
                             }
                         }
-                    } else if i == 0 {
-                        if j == 0 {
-                            if grid[i][j+1].is_bomb() { count += 1}
-                            if grid[i+1][j].is_bomb() { count += 1}
-                            if grid[i+1][j+1].is_bomb() { count += 1}
-                        } else if j == width - 1 {
-                            if grid[i][j-1].is_bomb() { count += 1}
-                            if grid[i+1][j-1].is_bomb() { count += 1}
-                            if grid[i+1][j].is_bomb() { count += 1}
-                        } else {
-                            if grid[i][j-1].is_bomb() { count += 1}
-                            if grid[i][j+1].is_bomb() { count += 1}
-                            if grid[i+1][j-1].is_bomb() { count += 1}
-                            if grid[i+1][j].is_bomb() { count += 1}
-                            if grid[i+1][j+1].is_bomb() { count += 1}
-                        }
-                    }else if i == height - 1 {
-                        if j == 0 {
-                            if grid[i][j+1].is_bomb() { count += 1}
-                            if grid[i-1][j].is_bomb() { count += 1}
-                        } else if j == width - 1 {
-                            if grid[i][j-1].is_bomb() { count += 1}
-                            if grid[i-1][j-1].is_bomb() { count += 1}
-                            if grid[i-1][j].is_bomb() { count += 1}
-                        } else {
-                            if grid[i][j-1].is_bomb() { count += 1}
-                            if grid[i][j+1].is_bomb() { count += 1}
-                            if grid[i-1][j-1].is_bomb() { count += 1}
-                            if grid[i-1][j].is_bomb() { count += 1}
-                            if grid[i-1][j+1].is_bomb() { count += 1}
-                        }
-                    }else if j == 0 {
-                        if grid[i-1][j].is_bomb() { count += 1}
-                        if grid[i-1][j+1].is_bomb() { count += 1}
-                        if grid[i][j+1].is_bomb() { count += 1}
-                        if grid[i+1][j].is_bomb() { count += 1}
-                        if grid[i+1][j+1].is_bomb() { count += 1}
-                    }else if j == width -1 {
-                        if grid[i-1][j-1].is_bomb() { count += 1}
-                        if grid[i-1][j].is_bomb() { count += 1}
-                        if grid[i][j-1].is_bomb() { count += 1}
-                        if grid[i+1][j-1].is_bomb() { count += 1}
-                        if grid[i+1][j].is_bomb() { count += 1}
                     }
-                    
+
                     grid[i][j].set_count(count);
                 }
             }
         }
-// #endregion Hell
+
         Field {
             width,
             height,
